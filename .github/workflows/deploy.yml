@@ -31,6 +31,13 @@ jobs:
         with:
           r-version: 'release' # Or specify a specific R version
 
+      # --- Added System Dependency Installation ---
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libcurl4-openssl-dev
+      # --- End System Dependency Installation ---
+
       - name: Set up R package cache
         uses: actions/cache@v4
         with:
