@@ -39,7 +39,9 @@ jobs:
             libcurl4-openssl-dev \
             libfontconfig1-dev \
             libfreetype6-dev \
-            libmagick++-dev # Added ImageMagick++ dev library
+            libmagick++-dev \
+            libharfbuzz-dev \
+            libfribidi-dev
       # --- End System Dependency Installation ---
 
       - name: Set up R package cache
