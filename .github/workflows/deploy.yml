@@ -18,12 +18,33 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }} # Sets the deployment environment URL
+    # Optionally add caching for R packages and renv
+    env:
+      RENV_PATHS_CACHE: ~/.local/share/renv # Define cache path for renv
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4 # Checks out your repository code
+
+      # --- Added R Setup Steps ---
+      - name: Set up R
+        uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: 'release' # Or specify a specific R version
+
+      - name: Set up R package cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.RENV_PATHS_CACHE }}
+          key: ${{ runner.os }}-renv-${{ hashFiles('**/renv.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-renv-
+
+      - name: Restore R packages from renv
+        shell: Rscript {0}
+        run: |
+          if (!requireNamespace("renv", quietly = TRUE)) install.packages("renv")
+          renv::restore()
+      # --- End Added R Setup Steps ---
 
       - name: Install Quarto
         uses: quarto-dev/quarto-actions/setup@v2
